@@ -5,7 +5,7 @@
 # Contributor: Giovanni Scafora <giovanni@archlinux.org>
 
 pkgname=wine-staging
-pkgver=6.2
+pkgver=6.13
 pkgrel=1
 
 #_winever=${pkgver%.*}
@@ -16,10 +16,10 @@ source=(https://dl.winehq.org/wine/source/6.x/wine-$_winever.tar.xz{,.sign}
         "https://github.com/wine-staging/wine-staging/archive/v$_pkgbasever/wine-staging-v$_pkgbasever.tar.gz"
         30-win32-aliases.conf
         wine-binfmt.conf
-        199525.patch)
-sha512sums=('d28870ba58fc4ed9dc083f843d7f4ee8921722bb33e0b84c89f281fc27e5f827c0998ad629eb21c92f860dade77194d3c8a0f5b4c6ae3407fe7acef245cfa9a4'
+        209969.patch)
+sha512sums=('7e1a16873f1a160960e44a38c7af743ea3a10bc545c5724745733d14093188134b74a4f60fbc54f38546b0ed053209b67e35ea131a9cda58ec8041855100c5ee'
             'SKIP'
-            '558c46250babaacda92885c35c438797baff7b8eb45cb3cdf7f7572c35e6412e621182061a3a4e31444cc7580f99a61de6bd433bf2bb2b8139cdd718afd9cd2e'
+            '83a40b5a344db334541d94d58d287a1b8ff616114051129db20ac6b0365004a8753ec8d77a16da54ac26400eaa3e2d147d50a5ac8e17203898eb61cb06ff1f0c'
             '6e54ece7ec7022b3c9d94ad64bdf1017338da16c618966e8baf398e6f18f80f7b0576edf1d1da47ed77b96d577e4cbb2bb0156b0b11c183a0accf22654b0a2bb'
             'bdde7ae015d8a98ba55e84b86dc05aca1d4f8de85be7e4bd6187054bfe4ac83b5a20538945b63fb073caab78022141e9545685e4e3698c97ff173cf30859e285'
             'SKIP')
@@ -51,7 +51,7 @@ depends=(
   desktop-file-utils
 )
 
-makedepends=(autoconf ncurses bison perl fontforge flex mingw-w64-gcc
+makedepends=(autoconf bison perl fontforge flex mingw-w64-gcc
   giflib                lib32-giflib
   libpng                lib32-libpng
   gnutls                lib32-gnutls
@@ -99,7 +99,6 @@ optdepends=(
   libjpeg-turbo         lib32-libjpeg-turbo
   libxcomposite         lib32-libxcomposite
   libxinerama           lib32-libxinerama
-  ncurses               lib32-ncurses
   opencl-icd-loader     lib32-opencl-icd-loader
   libxslt               lib32-libxslt
   libva                 lib32-libva
@@ -140,7 +139,7 @@ prepare() {
   mkdir $pkgname-{32,64}-build
 
   # Apply custom patches
-  patch -p0 -i "${srcdir}/199525.patch" -d $srcdir/$pkgname 
+  patch -p0 -i "${srcdir}/209969.patch" -d $srcdir/$pkgname 
 }
 
 build() {
@@ -189,13 +188,13 @@ package() {
     dlldir="$pkgdir/usr/lib/wine" install
 
   # Font aliasing settings for Win32 applications
-  install -d "$pkgdir"/etc/fonts/conf.{avail,d}
-  install -m644 "$srcdir/30-win32-aliases.conf" "$pkgdir/etc/fonts/conf.avail"
-  ln -s ../conf.avail/30-win32-aliases.conf "$pkgdir/etc/fonts/conf.d/30-win32-aliases.conf"
+  install -d "$pkgdir"/usr/share/fontconfig/conf.{avail,default}
+  install -m644 "$srcdir/30-win32-aliases.conf" "$pkgdir/usr/share/fontconfig/conf.avail"
+  ln -s ../conf.avail/30-win32-aliases.conf "$pkgdir/usr/share/fontconfig/conf.default/30-win32-aliases.conf"
   install -Dm 644 "$srcdir/wine-binfmt.conf" "$pkgdir/usr/lib/binfmt.d/wine.conf"
 
-  i686-w64-mingw32-strip --strip-unneeded "$pkgdir"/usr/lib32/wine/*.dll
-  x86_64-w64-mingw32-strip --strip-unneeded "$pkgdir"/usr/lib/wine/*.dll
+  i686-w64-mingw32-strip --strip-unneeded "$pkgdir"/usr/lib32/wine/i386-windows/*.dll
+  x86_64-w64-mingw32-strip --strip-unneeded "$pkgdir"/usr/lib/wine/x86_64-windows/*.dll
 }
 
 # vim:set ts=8 sts=2 sw=2 et:
