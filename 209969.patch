@@ -1,7 +1,5 @@
-diff --git a/dlls/advapi32/Makefile.in b/dlls/advapi32/Makefile.in
-index 5175563cea1..11b3b5aaaf7 100644
---- a/dlls/advapi32/Makefile.in
-+++ b/dlls/advapi32/Makefile.in
+--- dlls/advapi32/Makefile.in
++++ dlls/advapi32/Makefile.in
 @@ -1,7 +1,7 @@
  EXTRADEFS = -D_ADVAPI32_
  MODULE    = advapi32.dll
